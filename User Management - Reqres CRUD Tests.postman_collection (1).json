@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "47ea4796-4bbe-498c-af1d-5ff37f53db2b",
+		"name": "User Management - Reqres CRUD Tests",
+		"description": "StartFragmentThis collection validates CRUD operations on the Reqres API using automated assertions and test chaining in Postman.EndFragment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50499797",
+		"_collection_link": "https://paramirana2004-4425704.postman.co/workspace/a6c5fc6a-9c9f-4557-be91-3d9069c7d776/collection/50499797-47ea4796-4bbe-498c-af1d-5ff37f53db2b?action=share&source=collection_link&creator=50499797"
+	},
+	"item": [
+		{
+			"name": "Create New User (POST)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response contains 'id' and 'createdAt' fields (with robust checks)\", function () {",
+							"    // Step 1: Check status code",
+							"    pm.expect(pm.response.code, \"Expected status code 201, got \" + pm.response.code).to.eql(201);",
+							"",
+							"    // Step 2: Check Content-Type",
+							"    var contentType = pm.response.headers.get('Content-Type');",
+							"    pm.expect(contentType, \"Content-Type header is missing\").to.not.be.undefined;",
+							"    pm.expect(contentType, \"Content-Type is not application/json, got: \" + contentType).to.include('application/json');",
+							"",
+							"    // Step 3: Try to parse JSON",
+							"    let responseJson;",
+							"    try {",
+							"        responseJson = pm.response.json();",
+							"    } catch (e) {",
+							"        pm.expect.fail(\"Response body is not valid JSON: \" + e.message);",
+							"        return;",
+							"    }",
+							"",
+							"    // Step 4: Assert fields only if previous checks pass",
+							"    pm.expect(responseJson, \"Response JSON does not have 'id' field\").to.have.property('id');",
+							"    pm.expect(responseJson, \"Response JSON does not have 'createdAt' field\").to.have.property('createdAt');",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"QA Intern Candidate\",\r\n    \"job\": \"Test Engineer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single User (GET)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step 1: Validate the HTTP Status Code (200 OK)\r",
+							"pm.test(\"Status code is 200 OK\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Step 2: Validate Data Integrity - Check if the retrieved data is correct\r",
+							"pm.test(\"Retrieved user data matches expected name\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    // Reqres API wraps the user data in a 'data' object\r",
+							"    pm.expect(response.data.first_name).to.be.a('string'); \r",
+							"});\r",
+							"\r",
+							"// Step 3: Validate the Data Structure (Schema)\r",
+							"pm.test(\"Response contains all expected keys\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response.data).to.have.all.keys('id', 'email', 'first_name', 'last_name', 'avatar');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/{{newUserId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{newUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User (PUT)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step 1: Validate the HTTP Status Code (200 OK)\r",
+							"pm.test(\"Status code is 200 OK\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Step 2: Validate the updated content\r",
+							"pm.test(\"Job title has been successfully updated\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response.job).to.eql(\"Senior Test Engineer\");\r",
+							"});\r",
+							"\r",
+							"// Step 3: Validate the existence of the 'updatedAt' timestamp\r",
+							"pm.test(\"Response includes an 'updatedAt' timestamp\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response).to.have.property('updatedAt');\r",
+							"    pm.expect(response.updatedAt).to.be.a('string');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"QA Intern Candidate\",\r\n    \"job\": \"Senior Test Engineer\" \r\n    // We are updating the 'job' title\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/{{newUserId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{newUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User (DELETE)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step 1: Validate the HTTP Status Code (204 No Content)\r",
+							"pm.test(\"Status code is 204 No Content for successful deletion\", function () {\r",
+							"    // 204 is the standard HTTP response for a successful operation with no body returned\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"// Step 2: Validate the response body is empty\r",
+							"pm.test(\"Response body is empty\", function () {\r",
+							"    // A 204 response must not return a body\r",
+							"    pm.expect(pm.response.text()).to.be.empty;\r",
+							"});\r",
+							"\r",
+							"// Optional Step 3 (Advanced): Clear the newUserId variable\r",
+							"// This is good practice to ensure the test suite is clean for the next run.\r",
+							"pm.environment.set(\"newUserId\", null);\r",
+							"console.log(\"Cleared newUserId environment variable.\");"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/{{newUserId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{newUserId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
