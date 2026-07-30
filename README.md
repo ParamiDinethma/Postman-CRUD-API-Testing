@@ -56,11 +56,10 @@ This collection showcases the following critical API testing competencies:
 1. Open the collection → click **Run**.
 2. Confirm requests run in order: Create → Get → Update → Delete.
 3. Click **Run Collection**. All requests should pass.
-## ⚠️ Known Issues / Troubleshooting (Real-World QA)
 
 <img width="1315" height="880" alt="Screenshot 2026-07-30 120222" src="https://github.com/user-attachments/assets/bfef6025-13b2-4307-b153-12f41c16d731" />
 
- 
+## ⚠️ Known Issues / Troubleshooting (Real-World QA) 
 This section documents real problems encountered while building and maintaining this suite — and how they were diagnosed and resolved, rather than just worked around.
  
 **1. `missing_api_key` / `401` errors**
